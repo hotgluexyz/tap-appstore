@@ -197,6 +197,10 @@ def _attempt_download_report(api: Api, report_filters: Dict[str, any]) -> Union[
         rep_tsv = api.download_sales_and_trends_reports(filters=report_filters)
     except APIError as e:
         LOGGER.error(e)
+
+        if "Provide a properly configured and signed" in str(e):
+            raise Exception("Invalid credentials. Please check your credentials and try again.")
+
         return None
 
     # parse api response
