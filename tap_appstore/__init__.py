@@ -293,7 +293,8 @@ def main():
     api = Api(
         Context.config['key_id'],
         Context.config['key_file'],
-        Context.config['issuer_id']
+        Context.config['issuer_id'],
+        submit_stats=False
     )
 
     # If discover flag was passed, run discovery mode and dump output to stdout
