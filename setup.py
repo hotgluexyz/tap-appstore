@@ -7,12 +7,18 @@ setup(name='tap-appstore',
       description='Singer.io tap for extracting data from the App Store Connect API',
       author='JustEdro',
       url='https://github.com/JustEdro',
-      classifiers=['Programming Language :: Python :: 3 :: Only'],
+      classifiers=[
+          'Programming Language :: Python :: 3 :: Only',
+          'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.10',
+          'Programming Language :: Python :: 3.14',
+      ],
+      python_requires='>=3.7',
       py_modules=['tap-appstore'],
       install_requires=[
-          'singer-python==5.2.3',
+          'singer-python>=5.2.3',
           'appstoreconnect==0.10.1',
-          'pytz==2018.4'
+          'pytz>=2018.4'
       ],
       entry_points='''
           [console_scripts]
