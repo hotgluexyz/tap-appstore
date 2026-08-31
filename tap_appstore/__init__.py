@@ -5,7 +5,7 @@ from datetime import timedelta
 import os
 import tempfile
 import json
-from typing import Dict, Union, List
+from typing import Any, Dict, Union, List
 from singer.utils import strptime_to_utc, strftime
 
 import singer
@@ -113,7 +113,7 @@ def load_schemas():
     return schemas
 
 
-def discover(api: Api):
+def discover():
     raw_schemas = load_schemas()
     streams = []
     for schema_name, schema in raw_schemas.items():
@@ -158,7 +158,7 @@ def tsv_to_list(tsv):
     return data
 
 
-def get_api_request_fields(report_date, stream_name) -> Dict[str, any]:
+def get_api_request_fields(report_date, stream_name) -> Dict[str, Any]:
     """Get fields to be used in appstore API request """
     report_filters = {
         'reportDate': report_date,
@@ -191,7 +191,7 @@ def sync(api: Api):
         query_report(api, catalog_entry)
 
 
-def _attempt_download_report(api: Api, report_filters: Dict[str, any]) -> Union[List[Dict], None]:
+def _attempt_download_report(api: Api, report_filters: Dict[str, Any]) -> Union[List[Dict], None]:
     # fetch data from appstore api
     try:
         rep_tsv = api.download_sales_and_trends_reports(filters=report_filters)
@@ -290,25 +290,24 @@ def main():
             fp.write(Context.config['private_key'])
             Context.config['key_file'] = fp.name
 
-    api = Api(
-        Context.config['key_id'],
-        Context.config['key_file'],
-        Context.config['issuer_id'],
-        submit_stats=False
-    )
-
     # If discover flag was passed, run discovery mode and dump output to stdout
     if args.discover:
-        catalog = discover(api)
+        catalog = discover()
         Context.config = args.config
         print(json.dumps(catalog, indent=2))
 
     else:
+        api = Api(
+            Context.config['key_id'],
+            Context.config['key_file'],
+            Context.config['issuer_id'],
+            submit_stats=False
+        )
         Context.tap_start = utils.now()
         if args.catalog:
             Context.catalog = args.catalog.to_dict()
         else:
-            Context.catalog = discover(api)
+            Context.catalog = discover()
 
         Context.state = args.state
         sync(api)
